@@ -2,14 +2,18 @@ import { LOGO } from "./utils";
 
 const ConstantHeader = () => {
   return (
-    <div>
-      {/* header */}
-      <div className="flex justify-center flex-col items-center">
-        <img className="w-[85px] h-[85px]" src={LOGO} alt="" />
-        <h1 className="p-4 m-4 font-bold ">Ollato Mind Mapping Assesment</h1>
+    <div className="bg-gray-100 py-6">
+      {/* Header */}
+      <div className="flex flex-col items-center">
+        <img className="w-20 h-20" src={LOGO} alt="Logo" />
+        <h1 className="text-2xl font-bold text-gray-900 mt-4">
+          Ollato Mind Mapping Assessment
+        </h1>
       </div>
-      {/* Heading */}
-      <h1 className="flex justify-center ">HR Hiring Assessment</h1>
+      {/* Subheading */}
+      <h2 className="text-xl text-gray-700 mt-2 text-center">
+        HR Hiring Assessment
+      </h2>
     </div>
   );
 };

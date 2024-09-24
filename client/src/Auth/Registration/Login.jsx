@@ -2,20 +2,46 @@ import { useState } from "react";
 import ConstantFooter from "../../constants/ConstantFooter";
 import ConstantHeader from "../../constants/ConstantHeader";
 import { useNavigate, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/store";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContexts";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setUser } = useAuth();
+  const [showPass, setShowPass] = useState(false); // Controls password visibility
 
   // navigation
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // dispatch from redux
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Logic to handle login
-    console.log("Logging in with:", email, password);
-    navigate("/dashboard");
-    console.log(email, password);
+    try {
+      const response = await axios.post("http://localhost:5000/hr/login", {
+        email,
+        password,
+      });
+
+      // Save the user data and token after successful login
+      if (response.status === 200) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        dispatch(login(response.data.user)); // Dispatch login action
+        setUser(response.data.user); // Set user context
+        setEmail("");
+        setPassword("");
+        navigate("/dashboard"); // Navigate to dashboard
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || "Login Failed");
+      console.log(error);
+    }
   };
 
   return (
@@ -44,14 +70,22 @@ const Login = () => {
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter your password"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"} // Toggle between text and password type
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter your password"
+                  required
+                />
+                <div
+                  onClick={() => setShowPass(!showPass)} // Toggle password visibility
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                >
+                  {showPass ? <FaEye /> : <FaEyeSlash />}
+                </div>
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <button
@@ -60,7 +94,7 @@ const Login = () => {
               >
                 Login
               </button>
-              <Link to={"/signup"}>Do not have an Account register here</Link>
+              <Link to={"/signup"}>Do not have an Account? Register here</Link>
             </div>
           </form>
         </div>
