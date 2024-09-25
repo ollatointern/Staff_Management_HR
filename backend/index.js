@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const hrRoutes = require("./routes/hrRoutes");
+const question = require("./routes/questions");
 const mysql = require("mysql2");
 const app = express();
 
@@ -9,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/hr", hrRoutes);
+app.use("/api", question);
 
 const db = require("./config/db");
 
