@@ -1,40 +1,42 @@
-// import { useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-// import { useEffect } from "react";
 import Logout from "../components/Logout";
 import Sidebar from "../components/Sidebar";
 import DashboardHeader from "../constants/DashboardHeader";
 import { useAuth } from "../contexts/AuthContexts";
-// import { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { useEffect } from "react";
 
 const Dashboard = () => {
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  // const navigate = useNavigate();
   const { user } = useAuth();
 
-  // useEffect(() => {
-  //   // Retrieve user data from localStorage
-  //   const storedUser = localStorage.getItem("user");
-  //   if (storedUser) {
-  //     const userData = JSON.parse(storedUser);
-  //     setUser(userData); // Set user state with the retrieved data
-  //   }
-  // }, []);
-
   return (
-    <div className="mx-auto">
+    <div className="h-screen flex flex-col">
+      {/* Header */}
       <DashboardHeader />
-      <div className="pl-[200px] ">
-        <h1 className="text-xxl">Dashboard</h1>
-        <h1>Hello {user?.name}</h1>
-        Welcome to the Dashboard
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-[250px_1fr] flex-grow">
+        {/* Sidebar */}
+        <div className="h-[calc(80vh-56px)] overflow-y-auto">
+          <Sidebar />
+          {/* Logout Component */}
+          <Logout />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex flex-col p-4 overflow-y-auto">
+          {/* Dashboard Title and Button */}
+          <div className="flex justify-between">
+            <h1 className="text-3xl pl-2">Dashboard</h1>
+            <h1 className="pr-12">Generate Report</h1>
+          </div>
+
+          {/* Welcome Message */}
+          <div className="mt-4">
+            <h1 className="font-bold text-2xl">Hello {user?.name}</h1>
+            <p>Welcome to the Dashboard</p>
+          </div>
+        </div>
       </div>
-      <Sidebar />
-      <Logout />
     </div>
   );
 };
+
 export default Dashboard;

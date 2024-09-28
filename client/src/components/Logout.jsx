@@ -11,7 +11,10 @@ const Logout = () => {
 
   const logoutHandler = () => {
     // logout();
-    localStorage.removeItem("user");
+    // localStorage.removeItem("user", "answers");
+    // localStorage.removeItem("answers");
+    ["user", "answers"].forEach((key) => localStorage.removeItem(key));
+
     dispatch(logout());
     navigate("/");
   };

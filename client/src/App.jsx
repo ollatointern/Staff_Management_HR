@@ -18,6 +18,10 @@ import MyActivities from "./pages/MyActivities";
 import Packages from "./pages/Packages";
 import Report from "./pages/Report";
 import SessionManagement from "./pages/SessionManagement";
+import PaymentGateway from "./constants/PaymentGateway";
+import Results from "./components/Results";
+import LanguagePage from "./pages/LanguagePage";
+import InstructionPage from "./pages/InstructionPage";
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -97,6 +101,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <SessionManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/paymentgateway"
+            element={
+              <ProtectedRoute>
+                <PaymentGateway />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/results"
+            element={
+              <ProtectedRoute>
+                <Results />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/languages"
+            element={
+              <ProtectedRoute>
+                <LanguagePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/instructions"
+            element={
+              <ProtectedRoute>
+                <InstructionPage />
               </ProtectedRoute>
             }
           />
