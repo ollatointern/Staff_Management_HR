@@ -43,13 +43,14 @@ router.post("/signup", async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const insertUserQuery = `
-        INSERT INTO users (email, password, fullName, dateOfBirth, gender) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (email, password, fullName, dateOfBirth, gender, status) 
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
 
+      // Pass 'inactive' as the default status
       db.query(
         insertUserQuery,
-        [email, hashedPassword, fullName, dateOfBirth, gender],
+        [email, hashedPassword, fullName, dateOfBirth, gender, "inactive"],
         (err, results) => {
           if (err) {
             console.error(err);
@@ -61,7 +62,7 @@ router.post("/signup", async (req, res) => {
 
           res.status(200).json({
             success: true,
-            message: "User registered successfully.",
+            message: "User registered successfully with status inactive.",
           });
         }
       );
@@ -77,20 +78,21 @@ router.post("/signup", async (req, res) => {
 
 module.exports = router;
 
-// login route
+// Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({
       success: false,
-      message: "email and password are required",
+      message: "Email and password are required",
     });
   }
 
   const checkUserQuery = `SELECT * FROM users WHERE email = ?`;
 
-  db.query(checkUserQuery, [email, password], async (err, results) => {
+  // Only use email to find the user
+  db.query(checkUserQuery, [email], async (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).json({
@@ -108,7 +110,6 @@ router.post("/login", async (req, res) => {
     } else {
       // User exists, so login
       const user = results[0];
-      // console.log(user);
 
       // Compare the provided password with the stored hashed password
       const passwordMatch = await bcrypt.compare(password, user.password);
@@ -118,10 +119,22 @@ router.post("/login", async (req, res) => {
           success: false,
           message: "Invalid password",
         });
+        console.log("Error during comparing passwords");
       }
 
+      // Declare the token variable outside the try block
+      let token;
       // Generate JWT token after successful login
-      const token = jwt.sign({ email: user.email }, (jwtSecret = "yash"));
+      // Handle errors that might occur during jwt.sign()
+      try {
+        token = jwt.sign({ email: user.email }, "yash");
+      } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+          success: false,
+          message: "Server error occurred while generating JWT token",
+        });
+      }
 
       // Successful login
       return res.status(200).json({
@@ -129,23 +142,25 @@ router.post("/login", async (req, res) => {
         message: "Login successful",
         token: token,
         user: {
+          id: user.id, // Include other relevant fields
           name: user.fullName,
+          email: user.email,
+          status: user.status, // Assuming you have this field in your DB
         },
       });
     }
   });
-
-  // logout
-
-  // logout route
-  router.post("/logout", (req, res) => {
-    // For JWT, there's no specific server-side action needed
-    // You can simply inform the client to remove the token from local storage
-    return res.status(200).json({
-      success: true,
-      message: "Logout successful",
-    });
-  });
 });
 
+// logout
+
+// logout route
+router.post("/logout", (req, res) => {
+  // For JWT, there's no specific server-side action needed
+  // You can simply inform the client to remove the token from local storage
+  return res.status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
+});
 module.exports = router;
