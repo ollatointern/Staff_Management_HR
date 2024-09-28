@@ -44,10 +44,32 @@ const StyledCard = styled(Box)`
   }
 `;
 
+const AddOnsContainer = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const AddOnCard = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  margin-right: 5px; /* Reduced margin to bring them closer */
+`;
+
 const Packages = () => {
   const navigate = useNavigate();
+
   const handleClick = () => {
     navigate("/paymentgateway");
+  };
+
+  const handleBookSession = () => {
+    navigate("/booksession");
   };
 
   return (
@@ -115,6 +137,39 @@ const Packages = () => {
               </StyledCard>
             ))}
           </div>
+
+          {/* Add ons section */}
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{ mb: 2, fontWeight: 700, mt: 4 }}
+          >
+            Add ons.
+          </Typography>
+          <AddOnsContainer>
+            <AddOnCard>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+                Virtual Counseling
+              </Typography>
+              <Typography variant="body1" component="div" sx={{ mb: 1 }}>
+                60 minutes <span className="font-bold">₹1500/ Session.</span>
+              </Typography>
+              <StyledButton onClick={handleBookSession}>
+                Book Session
+              </StyledButton>
+            </AddOnCard>
+            <AddOnCard>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+                In-person Counseling
+              </Typography>
+              <Typography variant="body1" component="div" sx={{ mb: 1 }}>
+                60 minutes <span className="font-bold">₹2500/ Session.</span>
+              </Typography>
+              <StyledButton onClick={handleBookSession}>
+                Book Session
+              </StyledButton>
+            </AddOnCard>
+          </AddOnsContainer>
         </Box>
       </div>
     </div>
