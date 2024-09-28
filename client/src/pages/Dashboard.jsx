@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContexts";
 
 const Dashboard = () => {
   const { user } = useAuth();
-
+  console.log(user);
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}

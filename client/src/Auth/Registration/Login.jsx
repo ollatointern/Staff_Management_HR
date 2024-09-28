@@ -13,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { setUser } = useAuth();
   const [showPass, setShowPass] = useState(false); // Controls password visibility
+  const [loading, setLoading] = useState(false); // Loading state
 
   // navigation
   const navigate = useNavigate();
@@ -22,12 +23,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     // Logic to handle login
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    setLoading(true); // Start loading
     try {
       const response = await axios.post("http://localhost:5000/hr/login", {
         email,
         password,
       });
+
+      // Check if user data is large
+      if (Object.keys(response.data.user).length > 1000) {
+        console.log("Large user data");
+      }
 
       // Save the user data and token after successful login
       if (response.status === 200) {
@@ -39,8 +52,10 @@ const Login = () => {
         navigate("/dashboard"); // Navigate to dashboard
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
-      console.log(error);
+      alert(error.response?.data?.message || "Login failed. Please try again.");
+      console.log("Login error:", error.response?.data?.message || error);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -82,6 +97,7 @@ const Login = () => {
                 <div
                   onClick={() => setShowPass(!showPass)} // Toggle password visibility
                   className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                  aria-label={showPass ? "Hide password" : "Show password"}
                 >
                   {showPass ? <FaEye /> : <FaEyeSlash />}
                 </div>
@@ -90,9 +106,12 @@ const Login = () => {
             <div className="flex items-center justify-between">
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                disabled={loading}
+                className={`bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
               <Link to={"/signup"}>Do not have an Account? Register here</Link>
             </div>
