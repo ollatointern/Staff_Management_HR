@@ -1,16 +1,145 @@
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom"
-import AdminRegistration from "./Auth/Registration/AdminRegistration"
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import AdminRegistration from "./Auth/Registration/AdminRegistration";
+import "./main.css";
+import { useSelector } from "react-redux";
+import Login from "./Auth/Registration/Login";
+import Dashboard from "./pages/Dashboard";
+import { AuthProvider } from "./contexts/AuthContexts";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Assesments from "./pages/Assesments";
+import BookSession from "./pages/BookSession";
+import DownloadSummary from "./pages/DownloadSummary";
+import MyActivities from "./pages/MyActivities";
+import Packages from "./pages/Packages";
+import Report from "./pages/Report";
+import SessionManagement from "./pages/SessionManagement";
+import PaymentGateway from "./constants/PaymentGateway";
+import Results from "./components/Results";
+import LanguagePage from "./pages/LanguagePage";
+import InstructionPage from "./pages/InstructionPage";
+
 function App() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
-    <>
-      <BrowserRouter>
-      <Routes>
-        <Route path={"/"} element={<AdminRegistration/>} />
-      </Routes>
-      </BrowserRouter>
-    </>
-  )
+    <Router>
+      <AuthProvider>
+        <Routes>
+          {/* Login or Redirect to Dashboard if Authenticated */}
+          <Route
+            path="/"
+            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
+          />
+
+          {/* Signup Route */}
+          <Route path="/signup" element={<AdminRegistration />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/assessments"
+            element={
+              <ProtectedRoute>
+                <Assesments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booksession"
+            element={
+              <ProtectedRoute>
+                <BookSession />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/downloadsummary"
+            element={
+              <ProtectedRoute>
+                <DownloadSummary />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/myactivities"
+            element={
+              <ProtectedRoute>
+                <MyActivities />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/packages"
+            element={
+              <ProtectedRoute>
+                <Packages />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute>
+                <Report />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sessionmanagement"
+            element={
+              <ProtectedRoute>
+                <SessionManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/paymentgateway"
+            element={
+              <ProtectedRoute>
+                <PaymentGateway />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/results"
+            element={
+              <ProtectedRoute>
+                <Results />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/languages"
+            element={
+              <ProtectedRoute>
+                <LanguagePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/instructions"
+            element={
+              <ProtectedRoute>
+                <InstructionPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </Router>
+  );
 }
 
-export default App
+export default App;
